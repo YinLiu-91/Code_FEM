@@ -27,6 +27,7 @@ load mesh_example
 figure;
 PLOT_FEM(node(1:2, :), element(1:6, :));
 axis equal; axis tight; box on;
+saveas(gcf, 'mesh.png');  % 保存为MATLAB figure格式
 
 INIT_GEOMETRY
 
@@ -95,6 +96,7 @@ PLOT_FEM(node(1:2,:), element(1:6,:), full(U))
 axis equal; axis tight; box on;
 colorbar;
 title('velocity potential');
+saveas(gcf, 'velocity_potential.png');
 
 
 %% Calculate the velocity and other flow properties
@@ -106,27 +108,32 @@ PLOT_FEM(node(1:2,:), element(1:6,:), Vx)
 axis equal; axis tight; box on;
 colorbar;
 title('vx');
+saveas(gcf, 'vx.png');
 
 figure
 PLOT_FEM(node(1:2,:), element(1:6,:), Vy)
 axis equal; axis tight; box on;
 colorbar;
 title('vy');
+saveas(gcf, 'vy.png');
 
 figure
 PLOT_FEM(node(1:2,:), element(1:6,:), V./c)
 axis equal; axis tight; box on;
 colorbar;
 title('Mach number');
+saveas(gcf, 'mach_number.png');
 
 figure
 PLOT_FEM(node(1:2,:), element(1:6,:), rho)
 axis equal; axis tight; box on;
 colorbar;
 title('density');
+saveas(gcf, 'density.png');
 
 figure
 PLOT_FEM(node(1:2,:), element(1:6,:), c)
 axis equal; axis tight; box on;
 colorbar;
 title('sound speed');
+saveas(gcf, 'sound_speed.png');

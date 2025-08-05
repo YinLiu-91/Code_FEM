@@ -2,6 +2,7 @@
 
 % Add the Core directory to the path
 addpath(fullfile('..','..','..','..','Code_FEM','Core'));
+addpath(fullfile('..','..','..','..','Code_FEM','Library','Potential_Flow_Axi','T6'));
 
 global LIBRARY_PATH %#ok<NUSED>
 MANAGE_PATH

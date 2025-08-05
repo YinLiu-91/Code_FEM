@@ -30,8 +30,10 @@ for k=0:length(numbers)
     if (k>0)&&(k<length(numbers))
         token = P((numbers(k)+1):(numbers(k+1)-1));
     end
-    if strcmpi(token(end-length(DIRECTORY)+1:end),DIRECTORY)
-        break
+    if length(token)>=length(DIRECTORY)
+        if strcmpi(token(end-length(DIRECTORY)+1:end),DIRECTORY)
+            break
+        end
     end
 end
 
@@ -57,8 +59,10 @@ for k=0:length(numbers)
     if (k>0)&&(k<length(numbers))
         token = P((numbers(k)+1):(numbers(k+1)-1));
     end
-    if strcmpi(token(end-length(DIRECTORY_PRIVATE)+1:end),DIRECTORY_PRIVATE)
-        break
+    if length(token)>=length(DIRECTORY_PRIVATE)
+        if strcmpi(token(end-length(DIRECTORY_PRIVATE)+1:end),DIRECTORY_PRIVATE)
+            break
+        end
     end
 end
 

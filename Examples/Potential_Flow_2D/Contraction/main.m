@@ -13,16 +13,50 @@ global Flow
 Flow.gamma = 1.4;
 Flow.rho_inf = 1.2;
 Flow.c_inf = 340;
-Flow.outlet_velocity = Flow.c_inf*0.33;
+Flow.outlet_velocity = Flow.c_inf*0.13;
 Flow.v_inf = Flow.outlet_velocity;
 
 % Create a T3 mesh
 % [node, edge, element] = initmesh('geometry', 'Jiggle', 'mean', 'JiggleIter', 20, 'Hmax', 0.1);
 % or load an example of mesh
-load mesh_example
+% load mesh_example
+load matlab_my
+% a=load('mesh_example.mat');
+
+% 验证网格几何
+figure;
+PLOT_FEM(node(1:2, :), element(1:3, :));  % 显示T3网格
+hold on;
+
+fprintf('Mesh info:\n');
+fprintf('Nodes: %d\n', size(node,2));
+fprintf('Elements: %d\n', size(element,2));
+fprintf('Edges: %d\n', size(edge,2));
+
+% 检查边界边的编号
+unique_boundary_indices = unique(edge(5,:));
+fprintf('Boundary indices in mesh: ');
+fprintf('%d ', unique_boundary_indices);
+fprintf('\n');
+% 标记边界边
+for i = 1:size(edge,2)
+    if edge(5,i) > 0  % 如果是边界边
+        n1 = edge(1,i);
+        n2 = edge(2,i);
+        plot([node(1,n1), node(1,n2)], [node(2,n1), node(2,n2)], 'r-', 'LineWidth', 2);
+        text(mean([node(1,n1), node(1,n2)]), mean([node(2,n1), node(2,n2)]), ...
+             sprintf('%d', edge(5,i)), 'Color', 'red', 'FontWeight', 'bold');
+    end
+end
+title('Mesh with boundary indices');
+axis equal;
+saveas(gcf, 'mesh_bound_tag.png');
 
 % Convert the mesh to T6 elements
-[node, edge, element] = convert_T3_T6(node, edge, element, @geometry);
+% node: 2xN node的坐标
+% edge： 7xnum_edge_point,[node1,node2, node_x,node_y,boundary_index,1,0]
+[node, edge, element] = convert_T3_T6(node, edge, element);#, @geometry); # 不需要使用geometry公式来优化插入的中点，这样简单
+% [node, edge, element] = convert_T3_T6(node, edge, element, @geometry);
 
 % Plot the mesh
 figure;

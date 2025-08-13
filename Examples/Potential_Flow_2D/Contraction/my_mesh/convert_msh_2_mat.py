@@ -57,6 +57,7 @@ for i in range(elem_node_tag_max):
         not_in_mesh_nodes.append(value - 1)
 node_mat = np.delete(node_mat, not_in_mesh_nodes, axis=0)
 not_in_mesh_nodes = [8]
+# 由于没有8，9号节点，需要将其大于8的减去2
 for i in not_in_mesh_nodes:
     node_tags_per_element[0][node_tags_per_element[0] > i + 1] -= 2
 
@@ -77,6 +78,7 @@ for e in entities:
     tag=e[1]
     gmsh.model.mesh.getElements(dim,tag)
     elemTypes, elemTags, elemNodeTags = gmsh.model.mesh.getElements(dim, tag)
+    # 由于没有8，9号节点，需要将其大于8的减去2
     elemNodeTags[0][elemNodeTags[0] > 9] -= 2
     assert(len(elemTags)==1)
     #  计算每个边界的总长度

@@ -13,7 +13,7 @@ global Flow
 Flow.gamma = 1.4;
 Flow.rho_inf = 1.2;
 Flow.c_inf = 340;
-Flow.outlet_velocity = Flow.c_inf*0.13;
+Flow.outlet_velocity = -Flow.c_inf*0.13;
 Flow.v_inf = Flow.outlet_velocity;
 
 % Create a T3 mesh

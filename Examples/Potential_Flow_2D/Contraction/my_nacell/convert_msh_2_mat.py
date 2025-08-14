@@ -46,21 +46,6 @@ element_types, element_tags, node_tags_per_element = gmsh.model.mesh.getElements
 assert (np.min(node_tags_per_element) == 1).item()
 assert len(node_tags_per_element) == 1
 elem_node_tag_max = np.max(node_tags_per_element[0])
-not_in_mesh_nodes = []
-for i in range(elem_node_tag_max):
-    value = i + 1
-    in_elem_node_tag = np.isin(value, node_tags_per_element[0])
-    if not in_elem_node_tag:
-        print(f'node index:  {i} not in mesh')
-        # 这时需要所有大于此标号的tag-1
-        # node_tags_per_element[0][node_tags_per_element[0] > value] -= 1
-        not_in_mesh_nodes.append(value - 1)
-node_mat = np.delete(node_mat, not_in_mesh_nodes, axis=0)
-not_in_mesh_nodes = [8]
-# 由于没有8，9号节点，需要将其大于8的减去2
-for i in not_in_mesh_nodes:
-    node_tags_per_element[0][node_tags_per_element[0] > i + 1] -= 2
-
 # 获取mat文件中的element数据
 element_mat=np.hstack((node_tags_per_element[0].reshape((-1,3)),np.ones((len(node_tags_per_element[0])//3,1),dtype=np.uint64))) # 只取三角形单元
 
@@ -69,7 +54,7 @@ element_mat=np.hstack((node_tags_per_element[0].reshape((-1,3)),np.ones((len(nod
 # 获取几何entities
 # 获取边界信息
 entities = gmsh.model.getEntities(dim=1)
-assert(len(entities)==8)
+# assert(len(entities)==8)
 edge_mat_34_split=[]
 edge_mat_12_split=[]
 edge_mat_5_split=[]
@@ -78,8 +63,6 @@ for e in entities:
     tag=e[1]
     gmsh.model.mesh.getElements(dim,tag)
     elemTypes, elemTags, elemNodeTags = gmsh.model.mesh.getElements(dim, tag)
-    # 由于没有8，9号节点，需要将其大于8的减去2
-    elemNodeTags[0][elemNodeTags[0] > 9] -= 2
     assert(len(elemTags)==1)
     #  计算每个边界的总长度
     edge_length_total=0.0

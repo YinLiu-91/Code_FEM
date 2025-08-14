@@ -9,8 +9,10 @@ function [out] = boundary(~,bs,~)
 % Boundaries 5, 6, 7: upper wall (straight, curved, straight)
 % Boundary 8: duct termination on the left
 
+% 这里出流应该为potential边界，其他为velocity边界，但是入流的out的值不为0
 if nargin == 2
-    list = {'velocity','velocity','velocity','velocity','velocity','velocity','velocity','potential'};
+    % list = {'velocity','velocity','velocity','velocity','velocity','velocity','velocity','potential'}; % 原始case的边界
+    list = {'potential','velocity','potential','velocity','velocity','velocity'}; % for nacell_full
     out = list{bs};
     return
 end
@@ -26,9 +28,11 @@ if nargin == 3
         case 3
             out = 0;
         case 4
-            out = Flow.outlet_velocity;
+            out = 0;
+            % out = Flow.outlet_velocity;
         case 5
             out = 0;
+            out = Flow.outlet_velocity;
         case 6
             out = 0;
         case 7

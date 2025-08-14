@@ -58,13 +58,15 @@ for index, z in enumerate(np.linspace(0, L, 100, dtype=np.float64)):
 print("r1 first zero: ",first_r1_zero*L)
 # 创建线
 fan_up=gmsh.model.geo.addLine(p2_list[0], p1_list[0])
-fan_down=gmsh.model.geo.addLine(p11_list[0], p22_list[0])
+p11_list.reverse()
+cone_spline = gmsh.model.geo.addSpline(p1_list + p11_list)
+fan_down = gmsh.model.geo.addLine(p11_list[-1], p22_list[0])
+outer_spline_down = gmsh.model.geo.addSpline(p22_list)
 inlet_line=gmsh.model.geo.addLine(p22_list[-1], p2_list[-1])
 # gmsh.model.geo.addLine(p1_list[-1], p11_list[-1], 4)
-p11_list.reverse()
-cone_spline = gmsh.model.geo.addSpline(p1_list+p11_list)
+
 outer_spline_up = gmsh.model.geo.addSpline(p2_list)
-outer_spline_down = gmsh.model.geo.addSpline(p22_list)
+
 
 # # 创建表面
 # gmsh.model.geo.addCurveLoop([1, spl1,4,-spl11,2,spl22, 3, -spl2])
@@ -86,14 +88,14 @@ gmsh.model.setPhysicalName(1, inlet, "inlet")
 domain=gmsh.model.addPhysicalGroup(2, [surface])
 gmsh.model.setPhysicalName(2, domain, "domain")
 
-gmsh.model.geo.mesh.setTransfiniteCurve(1, 50)
-gmsh.model.geo.mesh.setTransfiniteCurve(2, 50)
-gmsh.model.geo.mesh.setTransfiniteCurve(3, 100)
-gmsh.model.geo.mesh.setTransfiniteCurve(cone_spline, 200)
-gmsh.model.geo.mesh.setTransfiniteCurve(outer_spline_up, 200)
-gmsh.model.geo.mesh.setTransfiniteCurve(outer_spline_down, 200)
+# gmsh.model.geo.mesh.setTransfiniteCurve(1, 50)
+# gmsh.model.geo.mesh.setTransfiniteCurve(2, 50)
+# gmsh.model.geo.mesh.setTransfiniteCurve(3, 100)
+# gmsh.model.geo.mesh.setTransfiniteCurve(cone_spline, 200)
+# gmsh.model.geo.mesh.setTransfiniteCurve(outer_spline_up, 200)
+# gmsh.model.geo.mesh.setTransfiniteCurve(outer_spline_down, 200)
 
-# gmsh.option.setNumber("Mesh.MeshSizeFactor", 0.1)
+gmsh.option.setNumber("Mesh.MeshSizeFactor", 0.3)
 # 生成网格
 gmsh.model.geo.synchronize()
 

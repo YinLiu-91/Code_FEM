@@ -52,30 +52,56 @@ for index, z in enumerate(np.linspace(0, L, 100, dtype=np.float64)):
         p11_list.append(3000 + index)
         print(f'x1 x: {z*L}, y: {r1}')
     p2_list.append(2000 + index)
+
     p22_list.append(4000 + index)
     # gmsh.model.geo.addLine(p1, p2)
 print("r1 first zero: ",first_r1_zero*L)
 # 创建线
-gmsh.model.geo.addLine(p2_list[0], p1_list[0], 1)
-gmsh.model.geo.addLine(p11_list[0], p22_list[0], 2)
-gmsh.model.geo.addLine(p22_list[-1], p2_list[-1], 3)
+fan_up=gmsh.model.geo.addLine(p2_list[0], p1_list[0])
+fan_down=gmsh.model.geo.addLine(p11_list[0], p22_list[0])
+inlet_line=gmsh.model.geo.addLine(p22_list[-1], p2_list[-1])
 # gmsh.model.geo.addLine(p1_list[-1], p11_list[-1], 4)
 p11_list.reverse()
-spl1 = gmsh.model.geo.addSpline(p1_list+p11_list)
-spl2 = gmsh.model.geo.addSpline(p2_list)
-spl22 = gmsh.model.geo.addSpline(p22_list)
+cone_spline = gmsh.model.geo.addSpline(p1_list+p11_list)
+outer_spline_up = gmsh.model.geo.addSpline(p2_list)
+outer_spline_down = gmsh.model.geo.addSpline(p22_list)
 
 # # 创建表面
 # gmsh.model.geo.addCurveLoop([1, spl1,4,-spl11,2,spl22, 3, -spl2])
-gmsh.model.geo.addCurveLoop([1, spl1,2,spl22, 3, -spl2])
-gmsh.model.geo.addPlaneSurface([1])
+gmsh.model.geo.addCurveLoop([fan_up, cone_spline,fan_down,outer_spline_down, inlet_line, -outer_spline_up])
+surface=gmsh.model.geo.addPlaneSurface([1])
 
+fan=gmsh.model.addPhysicalGroup(1, [fan_up, fan_down])
+gmsh.model.setPhysicalName(1, fan, "fan")
+
+cone=gmsh.model.addPhysicalGroup(1, [cone_spline])
+gmsh.model.setPhysicalName(1, cone, "cone")
+
+outer=gmsh.model.addPhysicalGroup(1, [outer_spline_up,outer_spline_down])
+gmsh.model.setPhysicalName(1, outer, "outer")
+
+inlet=gmsh.model.addPhysicalGroup(1, [inlet_line])
+gmsh.model.setPhysicalName(1, inlet, "inlet")
+
+domain=gmsh.model.addPhysicalGroup(2, [surface])
+gmsh.model.setPhysicalName(2, domain, "domain")
+
+gmsh.model.geo.mesh.setTransfiniteCurve(1, 50)
+gmsh.model.geo.mesh.setTransfiniteCurve(2, 50)
+gmsh.model.geo.mesh.setTransfiniteCurve(3, 100)
+gmsh.model.geo.mesh.setTransfiniteCurve(cone_spline, 200)
+gmsh.model.geo.mesh.setTransfiniteCurve(outer_spline_up, 200)
+gmsh.model.geo.mesh.setTransfiniteCurve(outer_spline_down, 200)
+
+# gmsh.option.setNumber("Mesh.MeshSizeFactor", 0.1)
 # 生成网格
 gmsh.model.geo.synchronize()
+
+
 gmsh.model.mesh.generate(2)
 
 # 保存几何
-gmsh.write("CFM56_model.msh")
+gmsh.write("CFM56_model.msh40")
 
 # 绘制几何
 # gmsh.fltk.run()
